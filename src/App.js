@@ -1,23 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from "react";
+import {ApiCall} from "./redux/action/ApiCall";
+import { useDispatch, useSelector } from "react-redux";
+import ToDoInput from "../src/components/TodoInput";
+import ToDoList from "./components/Todolisttable";
+import ToDoListTable from "./components/Todolisttable";
 
 function App() {
+  const dispatch = useDispatch();
+  const ToDoList = useSelector((state) => state.ToDoList);
+  const { loading, error, ToDos } = ToDoList;
+  
+
+  useEffect(() => {
+    dispatch(ApiCall());
+  }, [dispatch]);
+
+  if (!loading) {
+    console.log(ToDos);
+  }
+    
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      {loading ? (
+        <div>...loading</div>
+      ) : error ? (
+        <div>...error</div>
+      ) : (
+        <div>
+          <ToDoInput/>
+          {ToDos.map((ToDo,i) => (
+            <div key={i}>
+              <ToDoListTable ToDo={ToDo} />
+            </div>
+          ))}
+          
+        </div>
+      )}
     </div>
   );
 }
